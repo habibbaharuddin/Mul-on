@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+    <style type="text/css">
+        canvas {
+            background-color: bisque;
+        }
+    </style>
+    <script type="text/javascript">
+        function startMyApp() {
+            myApp.start();
+            ball = new Sprite(100, 100, 20, 'blue');
+            ball.update();
+            console.log(ball);
+        }
+        var ball;
+
+        var myApp = {
+            canvas: document.createElement("canvas"),
+            start: function () {
+                this.canvas.width = 800;
+                this.canvas.height = 450;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(appLoop, 20);
+            },
+            clear: function () {
+                this.context.clearReact(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        function appLoop() {
+            myApp.clear();
+            ball.x += 1;
+            if (ball.x > 800) {
+                ball.x = 0;
+            }
+            ball.update();
+        }
+        function Sprite(x, y, radius, color) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.color = color;
+            this.speed = 10;
+            var ctx = myApp.context;
+            this.update = function () {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                ctx.fillStyle("blue");
+                ctx.fill();
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+    <script></script>
+</body>
+
+</html>
