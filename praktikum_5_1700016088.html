@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Snack Canvas HTML App</title>
+	<style type="text/css">
+		canvas{
+			background-color: #ccc;
+		}
+	</style>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+var dots=[];
+var movement=[];
+var step=8;
+function startMyApp()
+{
+	myApp.start();
+	for(var i=0; i<20; i++)
+	{
+		var x=(i*step)+100;
+		var y=100;
+		dots[i]=new Sprite(x,y,10,'red');
+		movement.unshift([x,y]);
+	}
+}
+
+var myApp = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 800;
+        this.canvas.height = 450;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]); 
+        appControl();
+        this.interval = setInterval(appLoop, 20);
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function appLoop()
+{
+	myApp.clear();
+	for(var i=0; i<dots.length; i++)
+	{
+		dots[i].update();
+	}
+}
+
+
+function Sprite(x,y,radius,color)
+{
+	this.x=x;
+	this.y=y;
+	this.radius=radius;
+	this.color=color;
+	var ctx=myApp.context;
+	this.update=function()
+	{
+		ctx.beginPath();
+        ctx.arc(this.x,this.y,this.radius,0,2*Math.PI);
+        ctx.fillStyle = this.color;
+      	ctx.fill();
+	}
+}
+
+
+
+function appControl()
+{
+	var speed=step;
+	document.body.addEventListener('keydown',function(e){
+		if(e.key=='ArrowRight')
+		{
+			dots[0].x+=speed;
+		}
+		if(e.key=='ArrowLeft')
+		{
+			dots[0].x-=speed;
+		}
+		if(e.key=='ArrowDown')
+		{
+			dots[0].y+=speed;
+		}
+		if(e.key=='ArrowUp')
+		{
+			dots[0].y-=speed;
+		}
+
+		movement.unshift([dots[0].x,dots[0].y]);
+		if(movement.length>dots.length)
+		{
+			movement.splice(dots.length,1);
+		}
+
+		for(var i=0; i<=movement.length; i++)
+		{
+			dots[i].x=movement[i][0];
+			dots[i].y=movement[i][1];
+		}
+
+		console.log(movement);
+
+	})
+}
+
+startMyApp();
+
+</script>
+</body>
+</html>

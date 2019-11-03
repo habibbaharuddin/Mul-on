@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <title>Membuat Game Snake Dengan HTML5 dan JQuery</title>    
+ <style type="text/css">
+        canvas {
+            background-color: #ccc;
+        }
+
+        ;
+    </style>
+    </head>
+ 
+    <body>
+ 
+        <canvas id="ruang0" width="500" height="500"></canvas>
+        <canvas id="ruang" width="500" height="500"></canvas>
+        <canvas id="ruang1" width="500" height="500"></canvas>
+ 
+        <script type="text/javascript">
+            $(document).ready(function() {
+ 
+              // deklarasi
+			  var canvas = document.getElementById('ruang');
+              var ruang = $("#ruang")[0];
+              var ctx = ruang.getContext("2d");
+              var lebar = $("#ruang").width();
+              var tinggi = $("#ruang").height();
+ 
+	     var circle = canvas.getContext('2d');
+       circle.arc(100, 100, 100, 0, 2 * Math.PI);
+
+       circle.fillStyle = "yellow";
+       circle.fill();
+              var cw = 10;
+              var tekan ;
+              var makanan;
+              var nilai;
+ 
+              //membuat cell aray untuk membuat ular
+              var array_ular; 
+ 
+              function init() {
+                tekan = "right"; //default direction
+                create_snake();
+                create_makanan(); //membuat makanan untuk ular
+                //nilai game
+                nilai = 0;
+ 
+                if (typeof game_loop != "undefined") clearInterval(game_loop);
+                game_loop = setInterval(paint, 60);
+            }
+ 
+            init();
+ 
+              // membuat ular
+              function create_snake() {
+                // menetapkan jumlah panjang awal ular
+                var length = 5; //panjang ular default
+                array_ular = [];
+                for (var i = length - 1; i >= 0; i--) {
+                  //membuat ular horizontal mulai dari arah kiri
+                  array_ular.push({ x: i, y: 0 });
+              }
+            }
+ 
+              //membuat makanan untuk ular
+              function create_makanan() {
+                makanan = {
+                  x: Math.round(Math.random() * (lebar - cw) / cw),
+                  y: Math.round(Math.random() * (tinggi - cw) / cw)
+              };
+            }
+ 
+              //pengaturan
+              function paint() {
+                // warna background
+                ctx.fillStyle = "grey";
+                ctx.fillRect(0, 0, lebar, tinggi);    
+                ctx.strokeStyle = "#2c3e50";
+                ctx.strokeRect(0, 0, lebar, tinggi);
+ 
+                //membuat pergerakan untuk ular
+                var nx = array_ular[0].x;
+                var ny = array_ular[0].y;
+                if (tekan == "right") nx++;
+                else if (tekan == "left") nx--;
+                else if (tekan == "up") ny--;
+                else if (tekan == "down") ny++;
+ 
+                //memeriksa tabrakan
+                if (
+                  nx == -1 ||
+                  nx == lebar / cw ||
+                  ny == -1 ||
+                  ny == tinggi / cw ||
+                  cek_tabrakan(nx, ny, array_ular)
+                  ){
+ 
+                //restart game
+            init();
+            return;
+            }
+ 
+                //cek jika ular kena makanan/memakan makanan
+                if(nx == makanan.x && ny == makanan.y){
+ 
+                  var ekor = { x: nx, y: ny };
+                  nilai++;
+                  
+                  //membuat makanan yang baru
+                  create_makanan();
+                  
+              } else {
+                  var ekor = array_ular.pop();
+                  ekor.x = nx;
+                  ekor.y = ny;
+              }
+ 
+              array_ular.unshift(ekor);
+ 
+              for (var i = 0; i < array_ular.length; i++) {
+                  var c = array_ular[i];
+                  paint_cell(c.x, c.y);
+              }
+ 
+              paint_cell(makanan.x, makanan.y);    
+ 
+                //membuat penilaian skor
+                var nilai_text = "nilai: " + nilai;
+				ctx.font = '20px sans serif';
+                ctx.fillText(nilai_text, 10, tinggi - 10);
+            }
+ 
+            function paint_cell(x, y) {
+                ctx.fillStyle = "#1abc9c";
+                ctx.fillRect(x * cw, y * cw, cw, cw);
+                ctx.strokeStyle = "#ecf0f1";
+                ctx.strokeRect(x * cw, y * cw, cw, cw);
+            }
+ 
+            function cek_tabrakan(x, y, array) {
+                for (var i = 0; i < array.length; i++) {
+                  if (array[i].x == x && array[i].y == y) return true;
+              }
+              return false;
+            }
+ 
+              //kontrol ular dengan keyboard
+              $(document).keydown(function(e) {
+                var key = e.which;
+                if (key == "37" && tekan != "right") tekan = "left";
+                else if (key == "38" && tekan != "down") tekan = "up";
+                else if (key == "39" && tekan != "left") tekan = "right";
+                else if (key == "40" && tekan != "up") tekan = "down";
+            });
+            });
+ 
+function clock() {
+  var now = new Date();
+  var ctx = document.getElementById('ruang1').getContext('2d');
+  ctx.save();
+  ctx.clearRect(0, 0, 150, 150);
+  ctx.translate(75, 75);
+  ctx.scale(0.4, 0.4);
+  ctx.rotate(-Math.PI / 2);
+  ctx.strokeStyle = 'black';
+  ctx.fillStyle = 'white';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+
+  // Hour marks
+  ctx.save();
+  for (var i = 0; i < 12; i++) {
+    ctx.beginPath();
+    ctx.rotate(Math.PI / 6);
+    ctx.moveTo(100, 0);
+    ctx.lineTo(120, 0);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Minute marks
+  ctx.save();
+  ctx.lineWidth = 5;
+  for (i = 0; i < 60; i++) {
+    if (i % 5!= 0) {
+      ctx.beginPath();
+      ctx.moveTo(117, 0);
+      ctx.lineTo(120, 0);
+      ctx.stroke();
+    }
+    ctx.rotate(Math.PI / 30);
+  }
+  ctx.restore();
+ 
+  var sec = now.getSeconds();
+  var min = now.getMinutes();
+  var hr  = now.getHours();
+  hr = hr >= 12 ? hr - 12 : hr;
+
+  ctx.fillStyle = 'black';
+
+  // write Hours
+  ctx.save();
+  ctx.rotate(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) *sec);
+  ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.moveTo(-20, 0);
+  ctx.lineTo(80, 0);
+  ctx.stroke();
+  ctx.restore();
+
+  // write Minutes
+  ctx.save();
+  ctx.rotate((Math.PI / 30) * min + (Math.PI / 1800) * sec);
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(-28, 0);
+  ctx.lineTo(112, 0);
+  ctx.stroke();
+  ctx.restore();
+ 
+  // Write seconds
+  ctx.save();
+  ctx.rotate(sec * Math.PI / 30);
+  ctx.strokeStyle = '#D40000';
+  ctx.fillStyle = '#D40000';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(-30, 0);
+  ctx.lineTo(83, 0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, 0, 10, 0, Math.PI * 2, true);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(95, 0, 10, 0, Math.PI * 2, true);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+  ctx.arc(0, 0, 3, 0, Math.PI * 2, true);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.lineWidth = 14;
+  ctx.strokeStyle = '#325FA2';
+  ctx.arc(0, 0, 142, 0, Math.PI * 2, true);
+  ctx.stroke();
+
+  ctx.restore();
+
+  window.requestAnimationFrame(clock);
+   ctx.font = '24px sans serif';
+  ctx.strokeText('ingat waktu kalau bermain', 159, 50);
+}
+
+window.requestAnimationFrame(clock);
+
+   var c = document.getElementById('ruang0');
+        var ctx = c.getContext('2d');
+ ctx.font = '48px serif';
+  ctx.strokeText('Game snake', 100, 150);
+   ctx.font = '24px sans serif';
+  ctx.strokeText('Created By Habib', 120, 180);
+
+
+       
+            </script>
+ 
+ 
+        </body>
+</html>
