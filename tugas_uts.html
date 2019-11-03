@@ -16,7 +16,7 @@
  
     <body>
  
-        <canvas id="ruang0" width="500" height="500"></canvas>
+      
         <canvas id="ruang" width="500" height="500"></canvas>
         <canvas id="ruang1" width="500" height="500"></canvas>
  
@@ -256,16 +256,13 @@ function clock() {
   window.requestAnimationFrame(clock);
    ctx.font = '24px sans serif';
   ctx.strokeText('ingat waktu kalau bermain', 159, 50);
+     ctx.font = '48px sans serif';
+  ctx.strokeText('Game Snake', 159, 200);
+     ctx.font = '24px sans serif';
+  ctx.strokeText('Create By Habib', 159, 240);
 }
 
 window.requestAnimationFrame(clock);
-
-   var c = document.getElementById('ruang0');
-        var ctx = c.getContext('2d');
- ctx.font = '48px serif';
-  ctx.strokeText('Game snake', 100, 150);
-   ctx.font = '24px sans serif';
-  ctx.strokeText('Created By Habib', 120, 180);
 
 
        
